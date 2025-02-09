@@ -1,6 +1,7 @@
 import os
 os.environ["PATH"] += os.pathsep + "/home/appuser/.local/bin"
-
+import subprocess
+subprocess.run(["pip", "show", "pdfplumber"])
 import pdfplumber
 import pandas as pd
 import streamlit as st
