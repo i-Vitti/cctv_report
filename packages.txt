@@ -1,0 +1,2 @@
+libpoppler-cpp-dev
+libglib2.0-0
