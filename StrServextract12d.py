@@ -1,21 +1,22 @@
 import os
-import subprocess
 import sys
-import importlib
+import subprocess
 
-# Ensure the system recognizes installed packages
+# Ensure correct system paths
 os.environ["PATH"] += os.pathsep + "/home/appuser/.local/bin"
 sys.path.append("/home/appuser/.local/lib/python3.9/site-packages")
+sys.path.append("/home/adminuser/venv/lib/python3.9/site-packages")
 
-# Reinstall pdfplumber at runtime (if missing)
-try:
-    import pdfplumber
-except ModuleNotFoundError:
-    print("pdfplumber not found. Installing...")
-    subprocess.run(["pip", "install", "--no-cache-dir", "--force-reinstall", "pdfplumber"])
-    importlib.invalidate_caches()
-    pdfplumber = importlib.import_module("pdfplumber")
+# Force reinstall pdfplumber
+subprocess.run(["pip", "install", "--no-cache-dir", "--force-reinstall", "pdfplumber"])
 
+# Reload Python paths
+import importlib
+importlib.invalidate_caches()
+sys.path.append("/home/adminuser/venv/lib/python3.9/site-packages")
+
+# Now import pdfplumber
+import pdfplumber
 import pandas as pd
 import streamlit as st
 
