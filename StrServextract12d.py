@@ -1,8 +1,17 @@
 import os
-os.environ["PATH"] += os.pathsep + "/home/appuser/.local/bin"
 import subprocess
-subprocess.run(["pip", "show", "pdfplumber"])
-import pdfplumber
+
+# Ensure the correct path for binaries
+os.environ["PATH"] += os.pathsep + "/home/appuser/.local/bin"
+
+# Check if pdfplumber is installed
+try:
+    import pdfplumber
+except ModuleNotFoundError:
+    print("pdfplumber not found. Installing...")
+    subprocess.run(["pip", "install", "pdfplumber"])
+    import pdfplumber  # Import again after installation
+
 import pandas as pd
 import streamlit as st
 
