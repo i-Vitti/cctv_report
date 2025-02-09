@@ -3,19 +3,18 @@ import subprocess
 import sys
 import importlib
 
-# Ensure Streamlit recognizes the installed packages
+# Ensure the system recognizes installed packages
 os.environ["PATH"] += os.pathsep + "/home/appuser/.local/bin"
 sys.path.append("/home/appuser/.local/lib/python3.9/site-packages")
 
-# Force install pdfplumber if missing
+# Reinstall pdfplumber at runtime (if missing)
 try:
     import pdfplumber
 except ModuleNotFoundError:
     print("pdfplumber not found. Installing...")
-    subprocess.run(["pip", "install", "--no-cache-dir", "pdfplumber", "pdfminer.six"])
+    subprocess.run(["pip", "install", "--no-cache-dir", "--force-reinstall", "pdfplumber"])
     importlib.invalidate_caches()
-    sys.path.append("/home/appuser/.local/lib/python3.9/site-packages")
-    pdfplumber = importlib.import_module("pdfplumber")  # Dynamic import
+    pdfplumber = importlib.import_module("pdfplumber")
 
 import pandas as pd
 import streamlit as st
