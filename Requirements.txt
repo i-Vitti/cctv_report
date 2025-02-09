@@ -1,4 +1,5 @@
-pdfplumber
+pdfplumber --no-cache-dir
 pandas
 streamlit
 PyMuPDF
+
