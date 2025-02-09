@@ -1,4 +1,4 @@
-pdfplumber
+pdfplumber --force-reinstall
 pandas
 streamlit
 PyMuPDF
