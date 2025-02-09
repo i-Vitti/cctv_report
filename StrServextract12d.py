@@ -1,12 +1,19 @@
 import os
 import subprocess
 
-# Ensure correct system path
+# Ensure the system recognizes the installed packages
 os.environ["PATH"] += os.pathsep + "/home/appuser/.local/bin"
 
-# Manually install pdfplumber
-subprocess.run(["pip", "install", "--no-cache-dir", "pdfplumber"])
+# Manually install pdfplumber and dependencies
+subprocess.run(["pip", "install", "--no-cache-dir", "pdfplumber", "pdfminer.six"])
 
+# Force a system reload after installation
+import sys
+import importlib
+importlib.invalidate_caches()
+sys.path.append("/home/appuser/.local/lib/python3.9/site-packages")
+
+# Now import pdfplumber
 import pdfplumber
 import pandas as pd
 import streamlit as st
