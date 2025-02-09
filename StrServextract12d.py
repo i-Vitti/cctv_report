@@ -1,5 +1,6 @@
 import os
-os.system("pip install pdfplumber")
+os.environ["PATH"] += os.pathsep + "/home/appuser/.local/bin"
+
 import pdfplumber
 import pandas as pd
 import streamlit as st
