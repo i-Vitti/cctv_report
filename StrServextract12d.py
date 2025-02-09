@@ -1,3 +1,5 @@
+import os
+os.system("pip install pdfplumber")
 import pdfplumber
 import pandas as pd
 import streamlit as st
