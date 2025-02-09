@@ -3,11 +3,14 @@ import sys
 import subprocess
 import importlib
 
-# Ensure correct Python paths
-os.environ["PATH"] += os.pathsep + "/home/appuser/.local/bin"
+# Get the current Python version
+python_version = f"{sys.version_info.major}.{sys.version_info.minor}"
+
+# Update paths dynamically based on Python version
+os.environ["PATH"] += os.pathsep + f"/home/appuser/.local/bin"
 sys.path.extend([
-    "/home/appuser/.local/lib/python3.9/site-packages",
-    "/home/adminuser/venv/lib/python3.9/site-packages",
+    f"/home/appuser/.local/lib/python{python_version}/site-packages",
+    f"/home/adminuser/venv/lib/python{python_version}/site-packages",
 ])
 
 # Manually install pdfplumber (if missing)
@@ -15,10 +18,14 @@ try:
     import pdfplumber
 except ModuleNotFoundError:
     print("pdfplumber not found. Installing...")
-    subprocess.run(["pip", "install", "pdfplumber"])
+    subprocess.run([sys.executable, "-m", "pip", "install", "pdfplumber"])
     importlib.invalidate_caches()
-    sys.path.append("/home/adminuser/venv/lib/python3.9/site-packages")
-    pdfplumber = importlib.import_module("pdfplumber")
+    sys.path.append(f"/home/adminuser/venv/lib/python{python_version}/site-packages")
+    try:
+        pdfplumber = importlib.import_module("pdfplumber")
+    except ImportError as e:
+        print(f"Failed to import pdfplumber after installation: {e}")
+        raise
 
 import pandas as pd
 import streamlit as st
