@@ -58,7 +58,7 @@ def extract_pdf_content(pdf_path):
             extracted_values.append("Not found")
         
         try:
-            extracted_values.append(f"{table1.iloc[3, 0]}")
+            extracted_values.append(f"{table1.iloc[2, 5]}")
         except IndexError:
             extracted_values.append("Not found")
         
@@ -86,8 +86,8 @@ def extract_pdf_content(pdf_path):
 
 # Streamlit App
 def main():
-    st.title("PDF Data Extractor App")
-    uploaded_file = st.file_uploader("Upload a PDF file", type=["pdf"])
+    st.title("CCTV Data Extractor App")
+    uploaded_file = st.file_uploader("Upload a PDF CCTV report", type=["pdf"])
     
     if uploaded_file is not None:
         extracted_values = extract_pdf_content(uploaded_file)
