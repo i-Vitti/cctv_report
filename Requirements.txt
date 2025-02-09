@@ -1,5 +1,4 @@
---upgrade pip
-pdfplumber --no-cache-dir
+pdfplumber
 pandas
 streamlit
 PyMuPDF
