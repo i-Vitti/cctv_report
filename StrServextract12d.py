@@ -17,15 +17,15 @@ sys.path.extend([
 try:
     import pdfplumber
 except ModuleNotFoundError:
-    print("pdfplumber not found. Installing...")
-    subprocess.run([sys.executable, "-m", "pip", "install", "pdfplumber"], check=True)
-    importlib.invalidate_caches()
-    sys.path.append(f"/home/adminuser/venv/lib/python{python_version}/site-packages")
+    print("pdfplumber not found. Attempting installation...")
     try:
+        subprocess.run([sys.executable, "-m", "pip", "install", "pdfplumber"], check=False)
+        importlib.invalidate_caches()
+        sys.path.append(f"/home/adminuser/venv/lib/python{python_version}/site-packages")
         import pdfplumber
     except ImportError as e:
-        print(f"Failed to import pdfplumber after installation: {e}")
-        sys.exit(1)
+        print(f"Failed to install pdfplumber: {e}. Please install it manually.")
+        pdfplumber = None
 
 import pandas as pd
 import streamlit as st
@@ -34,6 +34,9 @@ import streamlit as st
 def extract_pdf_content(pdf_path):
     extracted_data = {'text': [], 'tables': []}
     extracted_values = []
+    
+    if not pdfplumber:
+        return ["Error: pdfplumber is not installed"]
     
     with pdfplumber.open(pdf_path) as pdf:
         for page in pdf.pages:
