@@ -13,19 +13,19 @@ sys.path.extend([
     f"/home/adminuser/venv/lib/python{python_version}/site-packages",
 ])
 
-# Manually install pdfplumber (if missing)
+# Ensure pdfplumber is installed
 try:
     import pdfplumber
 except ModuleNotFoundError:
     print("pdfplumber not found. Installing...")
-    subprocess.run([sys.executable, "-m", "pip", "install", "pdfplumber"])
+    subprocess.run([sys.executable, "-m", "pip", "install", "pdfplumber"], check=True)
     importlib.invalidate_caches()
     sys.path.append(f"/home/adminuser/venv/lib/python{python_version}/site-packages")
     try:
-        pdfplumber = importlib.import_module("pdfplumber")
+        import pdfplumber
     except ImportError as e:
         print(f"Failed to import pdfplumber after installation: {e}")
-        raise
+        sys.exit(1)
 
 import pandas as pd
 import streamlit as st
