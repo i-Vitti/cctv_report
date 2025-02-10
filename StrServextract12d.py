@@ -87,15 +87,16 @@ def extract_pdf_content(pdf_path):
 # Streamlit App
 def main():
     st.title("CCTV Data Extractor App")
-    uploaded_file = st.file_uploader("Upload a PDF CCTV report", type=["pdf"])
+    uploaded_files = st.file_uploader("Upload PDF CCTV reports", type=["pdf"], accept_multiple_files=True)
     
-    if uploaded_file is not None:
-        extracted_values = extract_pdf_content(uploaded_file)
-        
-        # Display extracted values
-        st.subheader("Extracted Specific Table Values")
-        for value in extracted_values:
-            st.write(value)
+    if uploaded_files:
+        for uploaded_file in uploaded_files:
+            extracted_values = extract_pdf_content(uploaded_file)
+            
+            # Display extracted values
+            st.subheader(f"Extracted Data from {uploaded_file.name}")
+            for value in extracted_values:
+                st.write(value)
 
 if __name__ == "__main__":
     main()
