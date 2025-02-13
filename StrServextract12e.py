@@ -19,15 +19,11 @@ try:
 except ModuleNotFoundError:
     print("pdfplumber not found. Attempting installation...")
     try:
-        subprocess.run([sys.executable, "-m", "pip", "install", "pdfplumber", "--target=$HOME/.local/lib/python3.12/site-packages"], check=True)
+        subprocess.run([sys.executable, "-m", "pip", "install", "pdfplumber", "--target", os.path.expanduser(f"~/.local/lib/python{python_version}/site-packages")], check=True)
         importlib.invalidate_caches()
-sys.path.append(os.path.expanduser(f'~/.local/lib/python{python_version}/site-packages'))
-import pdfplumber
         sys.path.append(os.path.expanduser(f"~/.local/lib/python{python_version}/site-packages"))
-        sys.path.append(f"/home/adminuser/venv/lib/python{python_version}/site-packages")
-        print("Checking pdfplumber installation...")
-        subprocess.run([sys.executable, "-c", "import pdfplumber; print('pdfplumber installed successfully')"], check=True)
         import pdfplumber
+        print("pdfplumber installed successfully.")
     except Exception as e:
         print(f"Failed to install pdfplumber: {e}. Please install it manually.")
         sys.exit(1)
