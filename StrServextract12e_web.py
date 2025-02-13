@@ -2,6 +2,8 @@ import os
 import sys
 import subprocess
 import importlib
+import pandas as pd
+import streamlit as st
 
 # Get the current Python version
 python_version = f"{sys.version_info.major}.{sys.version_info.minor}"
@@ -28,9 +30,6 @@ except ModuleNotFoundError:
         print(f"Failed to install pdfplumber: {e}. Please install it manually.")
         sys.exit(1)
 
-import pandas as pd
-import streamlit as st
-
 # Function to extract specific table data from a PDF file
 def extract_pdf_content(pdf_path):
     extracted_data = {'text': [], 'tables': []}
@@ -53,35 +52,23 @@ def extract_pdf_content(pdf_path):
         table1, table2 = extracted_data['tables'][0], extracted_data['tables'][1]
         
         # Extracting required values safely
+        extracted_rows = []
         try:
-            extracted_values.append(f"{table1.iloc[2, 0]}")
+            extracted_rows.append([table1.iloc[2, 0], table1.iloc[2, 5]])
         except IndexError:
-            extracted_values.append("Not found")
+            extracted_rows.append(["Not found", "Not found"])
         
         try:
-            extracted_values.append(f"{table1.iloc[2, 5]}")
+            extracted_rows.append([table2.iloc[4, 5], table2.iloc[4, 11]])
         except IndexError:
-            extracted_values.append("Not found")
+            extracted_rows.append(["Not found", "Not found"])
         
         try:
-            extracted_values.append(f"{table2.iloc[4, 5]}")
+            extracted_rows.append([table2.iloc[5, 5], table2.iloc[5, 11]])
         except IndexError:
-            extracted_values.append("Not found")
+            extracted_rows.append(["Not found", "Not found"])
         
-        try:
-            extracted_values.append(f"{table2.iloc[5, 5]}")
-        except IndexError:
-            extracted_values.append("Not found")
-        
-        try:
-            extracted_values.append(f"{table2.iloc[4, 11]}")
-        except IndexError:
-            extracted_values.append("Not found")
-        
-        try:
-            extracted_values.append(f"{table2.iloc[5, 11]}")
-        except IndexError:
-            extracted_values.append("Not found")
+        extracted_values = pd.DataFrame(extracted_rows, columns=["Column1", "Column2"])
     
     return extracted_values
 
@@ -96,8 +83,16 @@ def main():
             
             # Display extracted values
             st.subheader(f"Extracted Data from {uploaded_file.name}")
-            for value in extracted_values:
-                st.write(value)
+            st.dataframe(extracted_values)
+            
+            # Provide download option
+            csv = extracted_values.to_csv(index=False).encode('utf-8')
+            st.download_button(
+                label="Download Results as CSV",
+                data=csv,
+                file_name=f"extracted_data_{uploaded_file.name}.csv",
+                mime='text/csv',
+            )
 
 if __name__ == "__main__":
     main()
