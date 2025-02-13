@@ -13,19 +13,22 @@ sys.path.extend([
     f"/home/adminuser/venv/lib/python{python_version}/site-packages",
 ])
 
-# Manually install pdfplumber (if missing)
+# Ensure pdfplumber is installed and recognized
 try:
     import pdfplumber
 except ModuleNotFoundError:
-    print("pdfplumber not found. Installing...")
-    subprocess.run([sys.executable, "-m", "pip", "install", "pdfplumber"])
-    importlib.invalidate_caches()
-    sys.path.append(f"/home/adminuser/venv/lib/python{python_version}/site-packages")
+    print("pdfplumber not found. Attempting installation...")
     try:
-        pdfplumber = importlib.import_module("pdfplumber")
-    except ImportError as e:
-        print(f"Failed to import pdfplumber after installation: {e}")
-        raise
+        subprocess.run([sys.executable, "-m", "pip", "install", "--user", "pdfplumber"], check=True)
+        importlib.invalidate_caches()
+        sys.path.append(os.path.expanduser(f"~/.local/lib/python{python_version}/site-packages"))
+        sys.path.append(f"/home/adminuser/venv/lib/python{python_version}/site-packages")
+        print("Checking pdfplumber installation...")
+        subprocess.run([sys.executable, "-c", "import pdfplumber; print('pdfplumber installed successfully')"], check=True)
+        import pdfplumber
+    except Exception as e:
+        print(f"Failed to install pdfplumber: {e}. Please install it manually.")
+        sys.exit(1)
 
 import pandas as pd
 import streamlit as st
@@ -58,7 +61,7 @@ def extract_pdf_content(pdf_path):
             extracted_values.append("Not found")
         
         try:
-            extracted_values.append(f"{table1.iloc[3, 0]}")
+            extracted_values.append(f"{table1.iloc[2, 5]}")
         except IndexError:
             extracted_values.append("Not found")
         
@@ -86,16 +89,17 @@ def extract_pdf_content(pdf_path):
 
 # Streamlit App
 def main():
-    st.title("PDF Data Extractor App")
-    uploaded_file = st.file_uploader("Upload a PDF file", type=["pdf"])
+    st.title("CCTV Data Extractor App")
+    uploaded_files = st.file_uploader("Upload PDF CCTV reports", type=["pdf"], accept_multiple_files=True)
     
-    if uploaded_file is not None:
-        extracted_values = extract_pdf_content(uploaded_file)
-        
-        # Display extracted values
-        st.subheader("Extracted Specific Table Values")
-        for value in extracted_values:
-            st.write(value)
+    if uploaded_files:
+        for uploaded_file in uploaded_files:
+            extracted_values = extract_pdf_content(uploaded_file)
+            
+            # Display extracted values
+            st.subheader(f"Extracted Data from {uploaded_file.name}")
+            for value in extracted_values:
+                st.write(value)
 
 if __name__ == "__main__":
     main()
